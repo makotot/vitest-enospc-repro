@@ -5,12 +5,13 @@ let total = 0;
 let current = 0;
 let maxConcurrent = 0;
 
-fs.watch = function patched(...args) {
+fs.watch = function patched(filename, ...args) {
   total++;
   current++;
   if (current > maxConcurrent) maxConcurrent = current;
+  process.stderr.write(`fs.watch: ${filename}\n`);
 
-  const watcher = orgWatch.apply(this, args);
+  const watcher = orgWatch.apply(this, [filename, ...args]);
   watcher.on('close', () => { current--; });
   return watcher;
 };
