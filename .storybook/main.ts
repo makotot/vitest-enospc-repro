@@ -4,7 +4,8 @@ const config: StorybookConfig = {
   stories: ['../src/**/*.stories.@(ts|tsx)'],
   framework: {
     name: '@storybook/nextjs-vite',
-    options: {},
+    options: {
+    },
   },
   addons: ['@storybook/addon-vitest'],
 }

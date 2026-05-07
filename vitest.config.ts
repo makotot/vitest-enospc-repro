@@ -4,6 +4,11 @@ import { storybookTest } from '@storybook/addon-vitest/vitest-plugin'
 
 export default defineConfig({
   plugins: [storybookTest()],
+  server: {
+    watch: {
+      ignored: ['**/.pnpm/**']
+    },
+  },
   test: {
     browser: {
       enabled: true,
