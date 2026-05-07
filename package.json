@@ -1,0 +1,24 @@
+{
+  "name": "vitest-enospc-repro",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "",
+  "scripts": {
+    "test": "vitest run"
+  },
+  "devDependencies": {
+    "@types/node": "24",
+    "@vitest/browser": "4.0.18",
+    "@vitest/browser-playwright": "4.0.18",
+    "playwright": "1.58.1",
+    "typescript": "5.9.3",
+    "vite": "7.2.6",
+    "vitest": "4.0.18",
+    "react": "19",
+    "react-dom": "19"
+  },
+  "author": "makotot",
+  "license": "ISC",
+  "packageManager": "pnpm@10.14.0"
+}

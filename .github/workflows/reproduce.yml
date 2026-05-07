@@ -1,0 +1,46 @@
+name: reproduce-vitest-enospc
+
+on: [push, workflow_dispatch]
+
+jobs:
+  reproduce:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+
+      - name: Show inotify limits
+        run: |
+          echo "max_user_watches:   $(cat /proc/sys/fs/inotify/max_user_watches)"
+          echo "max_user_instances: $(cat /proc/sys/fs/inotify/max_user_instances)"
+          echo "max_queued_events:  $(cat /proc/sys/fs/inotify/max_queued_events)"
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Install playwright browsers
+        run: pnpm exec playwright install chromium
+
+      - name: Show node_modules size
+        run: |
+          echo "files: $(find node_modules -type f | wc -l)"
+          echo "dirs:  $(find node_modules -type d | wc -l)"
+
+      # === 1 回目: warm up ===
+      - name: 'Run #1 (warm up the .vite cache)'
+        run: NODE_OPTIONS="--require=$PWD/scripts/debug-fs-watch.cjs" pnpm test
+
+      # === lockfile を変えて Re-optimize の引き金にする ===
+      - name: Mutate lockfile (trigger Re-optimize on next run)
+        run: pnpm add -D date-fns@4.1.0
+
+      # === 2 回目: Re-optimize 発動 + fs.watch 大量起動を観測 ===
+      - name: 'Run #2 (Re-optimize triggered)'
+        run: NODE_OPTIONS="--require=$PWD/scripts/debug-fs-watch.cjs" pnpm test
