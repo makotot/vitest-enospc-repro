@@ -20,16 +20,21 @@ jobs:
           echo "max_user_instances: $(cat /proc/sys/fs/inotify/max_user_instances)"
           echo "max_queued_events:  $(cat /proc/sys/fs/inotify/max_queued_events)"
 
+      - name: Configure pnpm store inside project directory
+        run: pnpm config set store-dir $GITHUB_WORKSPACE/.pnpm
+
       - name: Install dependencies
         run: pnpm install
 
       - name: Install playwright browsers
         run: pnpm exec playwright install chromium
 
-      - name: Show node_modules size
+      - name: Show node_modules and pnpm store size
         run: |
-          echo "files: $(find node_modules -type f | wc -l)"
-          echo "dirs:  $(find node_modules -type d | wc -l)"
+          echo "node_modules files: $(find node_modules -type f | wc -l)"
+          echo "node_modules dirs:  $(find node_modules -type d | wc -l)"
+          echo ".pnpm store files:  $(find .pnpm -type f | wc -l)"
+          echo ".pnpm store dirs:   $(find .pnpm -type d | wc -l)"
 
       # === 1 回目: warm up ===
       - name: 'Run #1 (warm up the .vite cache)'
